@@ -10,6 +10,7 @@ from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFacto
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from pathlib import Path
 
 sns.set_style('whitegrid')
 
@@ -164,6 +165,8 @@ st.set_page_config(page_title='Sentiment Review App', layout='wide')
 st.title('Aplikasi Analisis Sentimen Review Aplikasi')
 st.write('Unggah dataset review Google Play, lakukan preprocessing teks Indonesia, dan prediksi sentimen secara interaktif.')
 
+DEFAULT_CSV = Path(__file__).with_name("LADS crawling data(3500).csv")
+
 uploaded_file = st.sidebar.file_uploader('Unggah file CSV review', type=['csv'])
 show_full_dataset = st.sidebar.checkbox('Tampilkan dataset lengkap', value=False)
 
@@ -172,6 +175,13 @@ if uploaded_file is not None:
         df_raw = pd.read_csv(uploaded_file)
     except Exception as exc:
         st.error(f'Gagal membaca file CSV: {exc}')
+        st.stop()
+elif DEFAULT_CSV.exists():
+    try:
+        df_raw = pd.read_csv(DEFAULT_CSV)
+        st.sidebar.success('Menggunakan dataset default')
+    except Exception as exc:
+        st.error(f'Gagal membaca dataset default: {exc}')
         st.stop()
 
     try:
